@@ -153,3 +153,66 @@ b0 + b1 * 6
 
 # WORKING EXAMPLE: if x rises by b1 how much does y change
 (5/10)*b1
+
+### ------- lm(), fitted values, residuals ---------------------------------------------------------------------------------------------------
+
+## example 
+data("ceosal1")                               # open specific data set
+reg <- lm(salary ~ roe, data = ceosal1)       # fit the OLS line:  lm(wage ~ educ, data = wage1)
+b0 <- reg$coefficients[1]                     # intercept:  reg$coefficients[1]
+b1 <- reg$coefficients[2]                     # slope:    reg$coefficients[2] 
+b0 + b1 * (-15)                               ## prediction @ -15
+b1 * -5                                       ## predicted change @ change = -5 
+
+# Yhat_i <- bhat0 + bhat1 * x_i  -->  fitted value yhat
+yhati <- 6 + (4/10)*14
+
+# residual -> uhati = Yi - Yhati
+uhati <- 19 - yhati
+
+## for the fitted line "" and the three points "" - find SSR
+
+# Fitted line: yhat = -2 + (7/10)*x
+x <- c(4, 5, 10)
+y <- c(9, 4, 12)
+# Calculate fitted values
+y_hat <- -2 + (7/10)*10
+# Calculate residuals
+residuals <- 12 - y_hat
+# Sum of squared residuals
+SSR <- sum(residuals^2)
+# add all SSR values 
+67.24 + 6.25 + 49
+
+## ---------- OLS properties 1-3  (hold on ANY sample) ---------------------------------------------------------------------
+
+sum(resids)                     # 1) the residuals sum to 0            -- add up the residuals of reg    formula =(sum of u(hat)i = 0 )
+cov(resids, wage1$educ)         # 2) x & residuals are uncorrelated    -- add up educ * (the residuals)  (~ 0)    formula = sum(Xi x U(hat)i = 0 )
+b0 <- reg$coefficients[1]       # 3) (xbar, ybar) is ON the line       -- does mean(wage) equal  b0 + b1*mean(educ)?   
+b1 <- reg$coefficients[2]
+b0 +b1 * mean(wage1$educ) 
+mean(wage1$wage).                  ## -> these two numbers are equal - shows property 3 
+
+# Yi > Y(hat)i  --> under prediction 
+# Yi < Y(hat)i  --> over prediction 
+
+## ---------- Goodness of fit (R^2) ------------------------------------------------------------------------------------------------
+
+data("bwght")
+reg2 <- lm(bwght ~ cigs, data = bwght)                                      # regression line of bwght on cigs
+SST <- sum((bwght$bwght - mean(bwght$bwght))^2)                             # total variation
+SSR <- sum(residuals(reg2)^2)                                               # unexplained variation
+SSE <- SST - SSR                                                            # explained variation
+R2 <- SSE / SST                                                             # R-squared = fraction of the sample variation in Y explained by X
+
+# FRACTION of variation in y unexplained = SSR / SST
+fracSSR <- SSR / SST
+
+# R2 close to 0 = the OLS line explains little of the variation in Y
+
+# given SST and R2 find SSR
+SSR <- ( 1 - R2 ) * SST
+
+
+
+
