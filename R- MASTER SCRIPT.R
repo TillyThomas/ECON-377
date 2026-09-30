@@ -205,6 +205,12 @@ SSR <- sum(residuals(reg2)^2)                                               # un
 SSE <- SST - SSR                                                            # explained variation
 R2 <- SSE / SST                                                             # R-squared = fraction of the sample variation in Y explained by X
 
+# other formulas for these calculations 
+SST <- (nrow(bwght) -1) * var(bwght$bwght)                          # nrow is number of observations (n)
+SSR <- (nrow(bwght)-1) * sum(residuals(reg2)^2) 
+SSE <- (nrow(bwght)-1) * var(reg2$fitted.values)
+R2 <- summary(reg2)$r.squared
+
 # FRACTION of variation in y unexplained = SSR / SST
 fracSSR <- SSR / SST
 
