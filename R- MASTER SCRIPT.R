@@ -284,62 +284,6 @@ fracSSR <- SSR / SST
 
 # given SST and R2 find SSR
 SSR <- ( 1 - R2 ) * SST
-
-
-##============== EXAM 1 - problem set practice ===================================================================================================
-
-# open data set 
-library(wooldridge)
-
-# load data sets                # In wage1, each row is one worker: wage is average hourly earnings (dollars per hour) and educ is years of education.
-data("wage1")
-data("bwght")
-
-# how many workers in wage1 sample
-nrow(wage1) 
-
-# sample mean of hourly wage    (to round to dp --> round(sd(wage1$educ), 2))
-mean(wage1$wage)
-
-# sample standard deviation 
-sd(wage1$educ)
-
-# run OLS regression of wage on educ
-reg <- lm(wage ~ educ, data = wage1)
-
-# slope of OLS line (b1)
-b1 <- reg$coefficients[2]
-
-# OLS intercept (b0)
-b0 <- reg$coefficients[1]
-
-# predicted hourly wage (y) @ educ (x) = 14      (change educ value depending on question)
-yhat <- b0 + b1 * 14
-
-# change in hourly wage (y) when educ (x) rises my 2 years
-change_yhat <- b1 * 2
-
-# sum of squared residuals SSR      --> sumi uhati^2
-SSR <- sum(reg$residuals^2)
-
-# R^2 for the regression of wage on educ      --> R^2 = 1 - SSR / SST 
-SST <- sum((wage1$wage - mean(wage1$wage))^2)
-R2 <- 1 - SSR / SST
-# check with 
-summary(reg)$r.squared
-
-# now onto bwght. Run regression of bwght 
-reg2 <- lm(bwght ~ cigs, data = bwght)
-
-# by how many ounces does predicted birth weight change when the mother smokes 5 more cigarettes per day
-# STEP 1 find b1 and b0
-b1 <- reg2$coefficients[2]
-b0 <- reg2$coefficients[1]
-# STEP 2 find change in bwght 
-change_bwght <- b1 * 5
-
-# predicted bwght (y) when cigs (x) = 10
-yhat2 <- b0 + b1 * 10
   
 # ============ MAIN R SKILLS ================================================================================================
 
@@ -396,7 +340,60 @@ summary(reg)$r.squared
 # Save/reuse
 result <- mean(x)
 
+##============== EXAM 1 - problem set practice ===================================================================================================
 
+# open data set 
+library(wooldridge)
+
+# load data sets                # In wage1, each row is one worker: wage is average hourly earnings (dollars per hour) and educ is years of education.
+data("wage1")
+data("bwght")
+
+# how many workers in wage1 sample
+nrow(wage1) 
+
+# sample mean of hourly wage    (to round to dp --> round(sd(wage1$educ), 2))
+mean(wage1$wage)
+
+# sample standard deviation 
+sd(wage1$educ)
+
+# run OLS regression of wage on educ
+reg <- lm(wage ~ educ, data = wage1)
+
+# slope of OLS line (b1)
+b1 <- reg$coefficients[2]
+
+# OLS intercept (b0)
+b0 <- reg$coefficients[1]
+
+# predicted hourly wage (y) @ educ (x) = 14      (change educ value depending on question)
+yhat <- b0 + b1 * 14
+
+# change in hourly wage (y) when educ (x) rises my 2 years
+change_yhat <- b1 * 2
+
+# sum of squared residuals SSR      --> sumi uhati^2
+SSR <- sum(reg$residuals^2)
+
+# R^2 for the regression of wage on educ      --> R^2 = 1 - SSR / SST 
+SST <- sum((wage1$wage - mean(wage1$wage))^2)
+R2 <- 1 - SSR / SST
+# check with 
+summary(reg)$r.squared
+
+# now onto bwght. Run regression of bwght 
+reg2 <- lm(bwght ~ cigs, data = bwght)
+
+# by how many ounces does predicted birth weight change when the mother smokes 5 more cigarettes per day
+# STEP 1 find b1 and b0
+b1 <- reg2$coefficients[2]
+b0 <- reg2$coefficients[1]
+# STEP 2 find change in bwght 
+change_bwght <- b1 * 5
+
+# predicted bwght (y) when cigs (x) = 10
+yhat2 <- b0 + b1 * 10
 
 
 
