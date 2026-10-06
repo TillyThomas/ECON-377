@@ -1,5 +1,33 @@
 ## MASTER SCRIPT 
 
+# ======== FOUNDATIONS ========================================================
+
+# Econometrics = uses data to learn about economic relationships 
+# Correlation = two things move together 
+# Causation = changing one thing changes the other 
+# Ceterus Paribus = "holding all else equal"
+# Types of data: 
+# Cross sectional = many units, one time 
+# Time series = one unit over time 
+# Panel = many units over time 
+# Summation operator = Σxi 
+# Sample mean = x̄
+# Linear function: y = b0 + b1 * x.     (b0 = intercept, b1 = slope, x = independent variable)
+# Change in y = b1 * change in x 
+# Multiple variable equation: chang y = (b1 * chang x) + (b2 * change x2)
+# Percentage change = ((x new - x old)) / x old) * 100
+
+#========== DESCRIBING DATA =====================================================
+
+# Sample variance (S^2x) = Σ (xi - xbar)^2
+Sample_variance <- var()
+# Sample standard deviation (Sx) = square root of sample var.
+Sample_sd <- sd()
+# Sample covariance: Sxy = 1/(n-1) Σ(xi - xbar) * (yi - ybar)
+sample_cov <- cov()
+# Sample correlation: Pxy = (sample cov / sample sd)    <-- always between -1 and 1
+
+
 ### ============== LINEAR FUNCTIONS AND PERCENTAGES ======================================================
 
 # y = b0 + b1 * x
@@ -59,14 +87,28 @@ EX <- sum(x*p)
 EX2 <- sum(x^2 * p)
 varX <- EX2 - EX^2
 sdX  <- sqrt(varX) 
+
+# Var(aX + b)
+a <- 2
+b <- 5
+X <- c(1, 2, 3, 4, 5)
+var(a * X + b)
   
+# Var(aX + bY)
+a <- 2
+b <- 3
+X <- c(1, 2, 3, 4, 5)
+Y <- c(5, 4, 3, 2, 1)
+var(a * X + b * Y)
+# OR (with covariance term)
+Var(aX + bY) <- a² Var(X) + b² Var(Y) + 2ab Cov(X,Y)
+
 # Covariance:  Cov(X,Y) = E[XY] - E[X]*E[Y] 
 x <- c(6,6,4)
 y <- c(4,8,4)
 p <- c(0.2,0.3,0.5)
 EXY <- sum((x * y) * p)
 CovXY <- EXY - (sum(x*p) * sum(y*p))
-
 
 # Correlation:  Cor(X,Y) = Cov(X,Y) / ( sd(X) * sd(Y) ) 
 ## Unitless; always between -1 and 1.   (Remember: correlation is NOT causation.)
@@ -97,7 +139,11 @@ sdX <- sqrt(varx)                # sqrt(EX - EX^2)
 sdY <- sqrt(vary)                # sqrt(EY - EY^2)
 Cor <- Cov / (sdX * sdY)                # Cor = Cov / (sdX * sdY)   -- should come out to 0.6
 
-#Conditional expectation:  E[Y | X = x] = average of Y within the X = x subgroup =====
+#Conditional expectation:  E[Y | X = x] = average of Y given specific x 
+is_x <- X == x
+y_x <- Y[is_x]
+mean(y_x)
+
 ## Build it in STEPS.  Goal: the average wage among people with exactly 12 years of educ.
 is12 <- wage1$educ == 12  
 w12  <- wage1$wage[is12]   
@@ -111,9 +157,24 @@ mean(w16)
 # Special case  E[X | X] = X: condition on X and there's nothing left to average.
 mean(wage1$educ[wage1$educ == 12])
 
-# Conditional variance:  Var(Y | X = x) = spread of Y within the X = x subgroup 
-# Var(wage | educ = 12)  -- var() of the SAME selected wages: var(w12)
-# Var(wage | educ = 16)  -- var(wage1$wage[wage1$educ == 16])
+# Conditional variance:  Var(Y | X = x) = spread of Y (variance) when specific x
+is_x <- X == x
+y_x <- Y[is_x]
+var(y_x)
+# Var(wage | educ = 12)  -- var() of the SAME selected wages
+var(w12)
+# Var(wage | educ = 16)  
+var(wage1$wage[wage1$educ == 16])
+
+# SIMPLE conditional expectation and conditional variance
+X <- c(1, 1, 1, 2, 2, 2)
+Y <- c(10, 20, 30, 20, 30, 40)
+cond_expec <- mean(Y[X == 1])
+cond_var <- var(Y[X == 1])
+
+# Common distribution:
+## T-distribution = like normal dis. but flatter tails 
+## F-distribution = always positive 
 
 ### =================== SIMPLE LINEAR REGRESSION (SLR) =====================================================
 
@@ -128,14 +189,14 @@ colgpa(3.6)                       # use it: predicted colGPA at hsGPA = 3.6   (-
 b1*1                            # how much does colGPA change from hsGPA 2.6 to 3.6?  (use colgpa)
 hsGPA <- seq(2, 4, by = 0.1)      # a range of hsGPA values
 
-### ================ SLR -- DERIVING OLS ESTIMATES ===========================================================
+### ================ DERIVING OLS ESTIMATES ===========================================================
 
 # Y = Dependent variable  , X = Independent variable 
 # SLR formula: y = b0 + b1 * x + u
 # To calc change in y = b1 * change in x + change in u
 # b1 = ceteris parabus effect of X on Y
 # b0 = y-intercept 
-# zero cond. mean assumption: E[U|X] = 0  --> avg. of U doesnt depend on X
+# zero cond. mean assumption: E[U|X] = 0  --> avg. of U doesnt depend on X  -> fails because it almost impossible to remove all other variables
 # Under SLR model and zero cond. mean; E[Y|X=x] = b0 + b1 * x
 
 # OLS slope estimate bhat1 = cov(x,y) / var(x)
@@ -145,11 +206,11 @@ bhat1 <- cov(x,y) / var (x)
 bhat0 <- mean(y) - bhat1 * mean(x)
 
 # WORKING EXAMPLE: find OLS line and predict 9 @ x=6
-x <- c(5,8,8)
-y <- c(5,9,5)
+x <- c(4,5,10)
+y <- c(9,4,12)
 b1 <- cov(x,y) / var (x)
 b0 <- mean(y) - b1 * mean(x)
-b0 + b1 * 6
+b0 + b1 * 3
 
 # WORKING EXAMPLE: if x rises by b1 how much does y change
 (5/10)*b1
@@ -200,16 +261,21 @@ mean(wage1$wage).                  ## -> these two numbers are equal - shows pro
 
 data("bwght")
 reg2 <- lm(bwght ~ cigs, data = bwght)                                      # regression line of bwght on cigs
-SST <- sum((bwght$bwght - mean(bwght$bwght))^2)                             # total variation
+SST <- sum((bwght$bwght - mean(bwght$bwght))^2)      # or SSE - SSR         # total variation
 SSR <- sum(residuals(reg2)^2)                                               # unexplained variation
 SSE <- SST - SSR                                                            # explained variation
-R2 <- SSE / SST                                                             # R-squared = fraction of the sample variation in Y explained by X
+R2 <- SSE / SST                   # or 1 - (SSR / SST)                      # R-squared = fraction of the sample variation in Y explained by X
+R2_option2 <- summary(reg2)$r.squared
+
+# A low R^2 is common in economics because human behavior and economic outcomes are influenced by many different factors
 
 # other formulas for these calculations 
 SST <- (nrow(bwght) -1) * var(bwght$bwght)                          # nrow is number of observations (n)
 SSR <- (nrow(bwght)-1) * sum(residuals(reg2)^2) 
 SSE <- (nrow(bwght)-1) * var(reg2$fitted.values)
 R2 <- summary(reg2)$r.squared
+
+summary(reg2)
 
 # FRACTION of variation in y unexplained = SSR / SST
 fracSSR <- SSR / SST
@@ -218,6 +284,118 @@ fracSSR <- SSR / SST
 
 # given SST and R2 find SSR
 SSR <- ( 1 - R2 ) * SST
+
+
+##============== EXAM 1 - problem set practice ===================================================================================================
+
+# open data set 
+library(wooldridge)
+
+# load data sets                # In wage1, each row is one worker: wage is average hourly earnings (dollars per hour) and educ is years of education.
+data("wage1")
+data("bwght")
+
+# how many workers in wage1 sample
+nrow(wage1) 
+
+# sample mean of hourly wage    (to round to dp --> round(sd(wage1$educ), 2))
+mean(wage1$wage)
+
+# sample standard deviation 
+sd(wage1$educ)
+
+# run OLS regression of wage on educ
+reg <- lm(wage ~ educ, data = wage1)
+
+# slope of OLS line (b1)
+b1 <- reg$coefficients[2]
+
+# OLS intercept (b0)
+b0 <- reg$coefficients[1]
+
+# predicted hourly wage (y) @ educ (x) = 14      (change educ value depending on question)
+yhat <- b0 + b1 * 14
+
+# change in hourly wage (y) when educ (x) rises my 2 years
+change_yhat <- b1 * 2
+
+# sum of squared residuals SSR      --> sumi uhati^2
+SSR <- sum(reg$residuals^2)
+
+# R^2 for the regression of wage on educ      --> R^2 = 1 - SSR / SST 
+SST <- sum((wage1$wage - mean(wage1$wage))^2)
+R2 <- 1 - SSR / SST
+# check with 
+summary(reg)$r.squared
+
+# now onto bwght. Run regression of bwght 
+reg2 <- lm(bwght ~ cigs, data = bwght)
+
+# by how many ounces does predicted birth weight change when the mother smokes 5 more cigarettes per day
+# STEP 1 find b1 and b0
+b1 <- reg2$coefficients[2]
+b0 <- reg2$coefficients[1]
+# STEP 2 find change in bwght 
+change_bwght <- b1 * 5
+
+# predicted bwght (y) when cigs (x) = 10
+yhat2 <- b0 + b1 * 10
+  
+# ============ MAIN R SKILLS ================================================================================================
+
+# Vectors
+x <- c(1, 2, 3, 4, 5)
+
+# Basic calculations
+sum(x)
+length(x)
+mean(x)
+var(x)
+sd(x)
+
+# Two-variable calculations
+cov(x, y)
+cor(x, y)
+
+# Dataset
+library(wooldridge)
+data("wage1")
+
+# Accessing columns
+wage1$wage
+wage1$educ
+
+# Sample size
+nrow(wage1)
+
+# Variance of data set
+var(wage1$wage)
+
+# SD data set 
+sd(wage1$wage)
+
+#Covariance data set
+cov(wage1$wage, wage1$educ)
+
+# Correlation data set
+cor(wage1$wage, wage1$educ)
+
+# Regression
+reg <- lm(y ~ x, data = data)
+
+# Regression information
+reg$coefficients                # Gives you b0, b1
+  reg2$coefficients[1]   # intercept 
+  reg2$coefficients[2]   # slope
+reg$fitted.values              # Predicted values of yhat at x
+reg$residuals                  # actual Y - predicted Y = residual
+
+# R-squared
+summary(reg)$r.squared
+
+# Save/reuse
+result <- mean(x)
+
 
 
 
