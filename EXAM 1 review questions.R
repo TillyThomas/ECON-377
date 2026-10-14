@@ -34,6 +34,20 @@ VarY <- sum(p * y^2) - EY^2
 CovXY / sqrt(VarX * VarY)               # Cor(X, Y) ANSWER 
 CovXY / VarX                            # population regression slope beta1
 
+# Calculate E[3Y-2 | X=x]
+Y <- c(4, 10, 16)
+p <- c(0.25, 0.5, 0.25)
+EY <- sum(Y * p)
+answer_a <- 3 * EY - 2
+answer_a
+
+# Calculate Var(Y | X=x)
+Y <- c(4, 10, 16)
+p <- c(0.25, 0.5, 0.25)
+EY <- sum(Y * p)
+variance <- sum(p * (Y - EY)^2)
+variance
+
 # For sample x=(...), y=(...) regress y on x. Find residual of 3rd observation
 x <- c(1,3,4,5,8)
 y <- c(10,5,6,8,5)
@@ -69,6 +83,25 @@ b0 <- 9
 b1 <- 3.9
 xhat <- 11
 yhat <- b0 + b1 * xhat
+
+# Ceosal1 (salary = CEO salary in thousands of dollars, roe = return on equity). Regress salary on roe.
+data(ceosal1)
+model <- lm(salary ~ roe, data = ceosal1)
+summary(model)
+
+#Find the explained sum of squares SSE
+SSE <- sum((fitted(model) - mean(ceosal1$salary))^2)
+SSE
+
+# Find the percentage of the variation in salary explained by roe.
+R2 <- summary(model)$r.squared
+percentage <- R2 * 100
+percentage
+
+# Suppose y = 2 + 1.5X1 − 0.8X2. If X1 rises by 4 and X2 falls by 3, by how much does y change?
+X1 <- 4 
+X2 <- -3
+chngY <- (1.5 * X1) - (0.8 * X2)
 
 
 
