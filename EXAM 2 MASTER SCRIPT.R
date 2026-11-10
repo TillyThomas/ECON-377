@@ -730,3 +730,20 @@ se_b1_big <- se_b1 / sqrt(4)            # (c) sample 4 times as large           
 round(sigma_hat, 2)
 round(se_b1, 2)
 round(se_b1_big, 2)
+
+
+## ======================== CHEAT CODES =================================================
+
+n <- nrow(hprice1)                                                # k <- no. independent variables 
+
+SSR <- SSR <- sum(reg$residuals^2)
+
+sigma_hat <- sqrt(SSR / dof)
+
+SST_j <- sum((hprice1$bdrms - mean(hprice1$bdrms))^2)             # SST_j for dataset
+
+R2_j <- summary(lm(bdrms ~ sqrft + lotsize, data = hprice1))$r.squared
+
+se(bjhat) <- sigma_hat / sqrt(SST_j * (1 - R2_j))
+
+summary(reg)$coefficients                                         # to view std.error and other values 
