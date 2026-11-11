@@ -8,6 +8,8 @@ options(scipen = 999)                   # stops R printing 1.547e-02; prints 0.0
 library(wooldridge)
 data("wage1"); data("gpa1"); data("ceosal1"); data("meap93"); data("bwght"); data("vote1"); data("hprice1")
 
+# clear saved variables 
+rm(list = ls())
 
 ## ======================================================================================================
 ## ================= A. FORMULA SHEET: EVERY KEY CALCULATION, NO DATA SET NEEDED =================
